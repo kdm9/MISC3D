@@ -1,73 +1,80 @@
-/*----------------------------------------------------------------------------*/
-/*  Created by Ziv Botzer                                                     */
-/*  18.5.2016                                                                 */
-/*  3.1.2017 increased maximum values                                         */
-/*----------------------------------------------------------------------------*/
-eps=0.1;
+// (C) Kevin Murray 2025   CC-BY-SA 4.0
 
-
-thread_h=30;
-
-union() {
-    translate([0, 0, thread_h])
-        rotate([180, 0, 0])
-        vacuum_hose_thread(h=thread_h);
-    translate([0, 0, thread_h-eps])
-
-    vac_adapter(        
-        // Diameter of your vacuum cleaner pipe + clearance (34.6mm worked good for me)
-        Base_Diameter = 41,
-        // Length of pipe overlapping vacuum clear pipe
-        Base_Overlap = 10,
-        // Length of chamfered area between nozzle and base
-        Base_Chamfer_Length = 20,  // [20:1:100]
-        // Material thickness at base
-        Base_Thickness = 2,
-        // Length of nozzle, total height of model
-        Nozzle_Length = 55, // [50:1:400]
-        // First dimension of nozzle section
-        Nozzle_Outer_A = 26.4, // [4:0.5:120]
-        // Second dimension of nozzle section
-        Nozzle_Outer_B = 26.4, // [4:0.5:120]
-        // Fillet radius of nozzle section
-        Nozzle_Fillet_Radius = 26.4, // [1:0.5:60]
-        // Material thickness along nozzle
-        Nozzle_Thickness = 2, // [0.5:0.2:5]
-        // Chamfer depth of nozzle tip
-        Nozzle_Chamfer_A = 0, // [0:1:120]
-        // Chamfer length of nozzle tip
-        Nozzle_Chamfer_B = 0 // [0:1:150]
-    );
-}
-
-                            
 include <BOSL2/std.scad>
 use <threadlib/threadlib.scad>
 $fn=96;
+include <../utils/vacuum_thread.scad>
+eps=0.1;
+thread_h=30;
+nozzle_id=22.4; // inner diam. of bit that mates with sander.
+nozzle_wall=2;
 
+
+union() {
+    translate([0, 0, thread_h])
+        rotate([180, 0, 0])  // by default the thread starts at the top but we want it facing down
+        vacuum_hose_thread(h=thread_h);
+
+    translate([0, 0, thread_h-eps])
+        vac_adapter(
+            Base_Diameter = 41,
+            // Length of pipe overlapping vacuum clear pipe
+            // Kept short, because it doesn't actually overlap tube for us as we have the threaded bit.
+            Base_Overlap = 10,
+            // Length of chamfered area between nozzle and base
+            Base_Chamfer_Length = 20,
+            // Material thickness at base
+            Base_Thickness = 2,
+            // Length of nozzle, total height of model
+            Nozzle_Length = 55,
+            // First dimension of nozzle section
+            Nozzle_Outer_A = nozzle_id+2*nozzle_wall,
+            // Second dimension of nozzle section
+            Nozzle_Outer_B = nozzle_id+2*nozzle_wall,
+            // Fillet radius of nozzle section
+            Nozzle_Fillet_Radius = nozzle_id+2*nozzle_wall,
+            // Material thickness along nozzle
+            Nozzle_Thickness = nozzle_wall,
+            // Chamfer depth of nozzle tip
+            Nozzle_Chamfer_A = 0,
+            // Chamfer length of nozzle tip
+            Nozzle_Chamfer_B = 0
+        );
+}
+
+
+// utils follow
+
+
+/*----------------------------------------------------------------------------*/
+/*  Some parts based on https://www.thingiverse.com/thing:1571860/files       */
+/*  Created by Ziv Botzer                                                     */
+/*  18.5.2016                                                                 */
+/*----------------------------------------------------------------------------*/
+// Made into a module and fixed a bit by KDM, 2025
 module vac_adapter(
-// Diameter of your vacuum cleaner pipe + clearance (34.6mm worked good for me)
-Base_Diameter = 34.6, // [20:0.1:80]
-// Length of pipe overlapping vacuum clear pipe
-Base_Overlap = 30, // [10:1:100]
-// Length of chamfered area between nozzle and base
-Base_Chamfer_Length = 30,  // [20:1:100]
-// Material thickness at base
-Base_Thickness = 1.8, // [0.5:0.2:5]
-// Length of nozzle, total height of model
-Nozzle_Length = 140, // [50:1:400]
-// First dimension of nozzle section
-Nozzle_Outer_A = 16, // [4:0.5:120]
-// Second dimension of nozzle section
-Nozzle_Outer_B = 8, // [4:0.5:120]
-// Fillet radius of nozzle section
-Nozzle_Fillet_Radius = 3, // [1:0.5:60]
-// Material thickness along nozzle
-Nozzle_Thickness = 1.4, // [0.5:0.2:5]
-// Chamfer depth of nozzle tip
-Nozzle_Chamfer_A = 20, // [0:1:120]
-// Chamfer length of nozzle tip
-Nozzle_Chamfer_B = 20, // [0:1:150]
+    // Diameter of your vacuum cleaner pipe + clearance
+    Base_Diameter = 45, // [20:0.1:80]
+    // Length of pipe overlapping vacuum clear pipe
+    Base_Overlap = 30, // [10:1:100]
+    // Length of chamfered area between nozzle and base
+    Base_Chamfer_Length = 30,  // [20:1:100]
+    // Material thickness at base
+    Base_Thickness = 1.8, // [0.5:0.2:5]
+    // Length of nozzle, total height of model
+    Nozzle_Length = 140, // [50:1:400]
+    // First dimension of nozzle section
+    Nozzle_Outer_A = 16, // [4:0.5:120]
+    // Second dimension of nozzle section
+    Nozzle_Outer_B = 8, // [4:0.5:120]
+    // Fillet radius of nozzle section
+    Nozzle_Fillet_Radius = 3, // [1:0.5:60]
+    // Material thickness along nozzle
+    Nozzle_Thickness = 1.4, // [0.5:0.2:5]
+    // Chamfer depth of nozzle tip
+    Nozzle_Chamfer_A = 20, // [0:1:120]
+    // Chamfer length of nozzle tip
+    Nozzle_Chamfer_B = 20, // [0:1:150]
 ){
     $fn=150;
 
@@ -106,25 +113,25 @@ Nozzle_Chamfer_B = 20, // [0:1:150]
         // positive form
         union() {
             make_base ( mainRadius + Base_Thickness, Base_Overlap + Base_Thickness, Base_Chamfer_Length_);
-            make_nozzle(Nozzle_Length, Nozzle_Outer_A, Nozzle_Outer_B, Nozzle_Fillet, 
+            make_nozzle(Nozzle_Length, Nozzle_Outer_A, Nozzle_Outer_B, Nozzle_Fillet,
                         Base_Overlap + Base_Chamfer_Length_/2);
         }
-        
+
         // negative form
         union() {
             translate([0,0,-0.2]) make_base ( mainRadius, Base_Overlap, Base_Chamfer_Length_);
-        
+
             translate([0,0,Nozzle_Thickness])
-            make_nozzle(Nozzle_Length+10, Nozzle_Outer_A-2*Nozzle_Thickness, Nozzle_Outer_B-2*Nozzle_Thickness, 
-                (Nozzle_Fillet-Nozzle_Thickness <= 0) ? 
-                0.1 :  Nozzle_Fillet - Nozzle_Thickness, 
+            make_nozzle(Nozzle_Length+10, Nozzle_Outer_A-2*Nozzle_Thickness, Nozzle_Outer_B-2*Nozzle_Thickness,
+                (Nozzle_Fillet-Nozzle_Thickness <= 0) ?
+                0.1 :  Nozzle_Fillet - Nozzle_Thickness,
                 Base_Overlap + Base_Chamfer_Length_/2 + Nozzle_Thickness);
         }
-        
+
         // trim triangle for long angle
         translate([-0.05,0,Nozzle_Length+0.01] )
-          rotate([90,0,0]) 
-          linear_extrude(Nozzle_Outer_B+1, center=true)  
+          rotate([90,0,0])
+          linear_extrude(Nozzle_Outer_B+1, center=true)
                         polygon( points = [[Nozzle_Outer_A/2-Nozzle_Chamfer_A_,0],
                                             [Nozzle_Outer_A/2+0.1,0],
                                             [Nozzle_Outer_A/2+0.1,-Nozzle_Chamfer_B_]] );
@@ -149,7 +156,7 @@ module make_nozzle( length, a, b, filletR, offset_z ) {
                 circle(filletR);
             }
         }
-    
+
         translate([0,0,offset_z+0.1])
         rotate([0,180,0])
             linear_extrude(offset_z, scale=0.1) {
@@ -160,34 +167,4 @@ module make_nozzle( length, a, b, filletR, offset_z ) {
             }
     }
 }
-
-
-MY_THREAD_TABLE = [
-   ["vactube", [-5.55, -20, 39.5, [ [0, 1.6], [0, -1.6], [2.4, -0.7], [2.4, 0.7]]]]
-];
-
-
-module tube(h, id, od) {
-    difference() {
-        cylinder(h=h, d=od);
-        translate([0, 0, -eps/2])
-            cylinder(h=h+eps, d=id);
-    }
-}
-
-
-module vacuum_hose_thread(h=40, od=45) {
-    id=39.5;
-    
-    union() {
-        tube(h, id, od);   
-
-        
-        intersection() {
-                cylinder(h=h, d=od);
-                translate([0, 0, h + -1.1])
-                    thread("vactube", turns=10, table=MY_THREAD_TABLE); 
-        }
-
-    }
-}
+// END of the code from Ziv Botzer
