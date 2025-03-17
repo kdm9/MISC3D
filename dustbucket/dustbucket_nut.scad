@@ -10,6 +10,7 @@ include <../utils/vacuum_thread.scad>
 $fn=96;
 
 LOOSE_MTHREAD = [
+   // to allow for shitty printing, we make smaller thread indents so it fits
    ["M64loose-int", [6, -33, 65, [[0, 2.5], [0, -2.5], [2.8, -0.4], [2.8, 0.4]]]],
 ];
 rotate([90, 0, 0])
