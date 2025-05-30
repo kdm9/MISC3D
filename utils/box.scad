@@ -13,17 +13,27 @@ module box_base(x, y, z, wall=4) {
 
 
 
-module screwpost(z, id, od, centre=true, rot=0) {
+module screwpost(z, id, od, centre=true, rot=0, square=[true, true, false, true]) {
     translate(!centre ? [od/2, od/2, 0]: [0, 0, 0])
     rotate([0,0, rot])
     difference() {
             union() {
-                //translate([-od/2, -od/2, 0])
-                //    cube([od/2, od/2, z]);
-                translate([-od/2, 0, 0])
-                    cube([od/2, od/2, z]);
-                translate([0, -od/2, 0])
-                    cube([od/2, od/2, z]);
+                if (square[0]) {
+                    translate([-od/2, -od/2, 0])
+                        cube([od/2, od/2, z]);
+                }
+                if (square[1]) {
+                    translate([-od/2, 0, 0])
+                        cube([od/2, od/2, z]);
+                }
+                if (square[3]) {
+                    translate([0, -od/2, 0])
+                        cube([od/2, od/2, z]);
+                }
+                if (square[2]) {
+                    translate([0, 0, 0])
+                        cube([od/2, od/2, z]);
+                }
                 cylinder(h=z, d=od);
             }
             thread_forming_hole(id, z);
